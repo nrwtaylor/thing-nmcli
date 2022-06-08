@@ -1,14 +1,14 @@
 {
-  "name": "thing-ping",
+  "name": "thing-nmli",
   "version": "1.0.1",
   "description": "Thing node connector for stack-agent-thing framework.",
-  "main": "thing-ping.js",
+  "main": "thing-nmcli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nrwtaylor/thing-ping.git"
+    "url": "git+https://github.com/nrwtaylor/thing-nmcli.git"
   },
   "keywords": [
     "thing",
@@ -19,9 +19,9 @@
   "author": "NRW Taylor",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nrwtaylor/thing-ping/issues"
+    "url": "https://github.com/nrwtaylor/thing-nmcli/issues"
   },
-  "homepage": "https://github.com/nrwtaylor/thing-ping#readme",
+  "homepage": "https://github.com/nrwtaylor/thing-nmcli#readme",
   "dependencies": {
     "axios": "^0.27.2",
     "discord.js": "^13.0.1",
