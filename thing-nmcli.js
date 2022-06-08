@@ -17,7 +17,7 @@ var sys = require("sys");
 var exec = require("child_process").exec;
 
 // 26 September 2021
-console.log("thing-nmcl 1.0.1 4 June 2022");
+console.log("thing-nmcl 1.0.1 6 June 2022");
 
 const client = gearmanode.client();
 //
@@ -35,6 +35,8 @@ var channel = process.env.CHANNEL;
 var transport = process.env.TRANSPORT;
 var interval_minutes = process.env.INTERVAL;
 var http_transport = process.env.HTTP_TRANSPORT;
+var nuuid = process.env.NUUID;
+
 
 //var minutes = 1,
 the_interval = interval_minutes * 60 * 1000;
@@ -59,7 +61,7 @@ setInterval(function () {
     }
   );
   // });
-}, 10000);
+}, 10 * 60 * 1000);
 
 function parseLine(text) {
   var obj = {};
@@ -71,6 +73,8 @@ function parseLine(text) {
 }
 
 function puts(error, stdout, stderr, text) {
+  const timestamp = new Date().toISOString();
+
   //console.log("text", text);
   //  console.log("stdout",stdout);
   //console.log("puts");
@@ -106,6 +110,8 @@ function puts(error, stdout, stderr, text) {
   //const sumSignal = visible_stations.reduce((acc, visibleStation) => (acc + visibleStation.SIGNAL), 0)
 
   var sumSignal = 0;
+  var bandSignal = {};
+  var bandCount = {};
 
   visible_stations.map((visibleStation) => {
     if (visibleStation.SIGNAL === undefined) {
@@ -115,7 +121,19 @@ function puts(error, stdout, stderr, text) {
       return;
     }
 
-    sumSignal += visibleStation.SIGNAL;
+    if (isNaN(bandSignal[visibleStation.CHAN])) {
+      bandSignal[visibleStation.CHAN] = 0;
+    }
+
+    if (isNaN(bandCount[visibleStation.CHAN])) {
+      bandCount[visibleStation.CHAN] = 0;
+    }
+
+    bandCount[visibleStation.CHAN] = bandCount[visibleStation.CHAN] + 1;
+    bandSignal[visibleStation.CHAN] =
+      bandSignal[visibleStation.CHAN] + visibleStation.SIGNAL;
+
+    //    sumSignal += visibleStation.SIGNAL;
   });
 
   const data = btoa(visible_stations);
@@ -123,16 +141,27 @@ function puts(error, stdout, stderr, text) {
   var to = channel;
   var from = "nmcli";
 
-  const timestamp = new Date().toISOString().slice(0, 17) + "00";
+  //  const timestamp = new Date().toISOString();
+  //const timestamp = new Date().toISOString().slice(0, 17) + "00";
+  //const timestamp = new Date().toISOString();
+  //const textBandSignal = flattenObject(bandSignal);
+  const textBandCount = "";
+  //flattenObject(bandCount);
+
+  textBandSignal = Object.keys(bandSignal).reduce(function (r, k) {
+    return r + "" + k + " " + bandSignal[k] + " " + bandCount[k] + " / ";
+  }, []);
+  //textBandSignal.replace("-"," ");
+  console.log(textBandSignal);
 
   const subject =
-    "thing 1d6b" + " " + station + " " + timestamp + " " + sumSignal;
+    "THING " + nuuid + " " + station + " " + textBandSignal;
 
   //const base64Data = btoa(stdout);
 
   //const data = nomnomText(stdout);
 
-  var agentInput = { data: data, createdAt: timestamp };
+  var agentInput = { data: data, surveyedAt: timestamp };
 
   const datagram = {
     to: to,
@@ -361,4 +390,24 @@ function handleDatagram(datagram) {
       // message.lineReplyNoMention(`My name is ${client.user.username}`); //L
     });
   }
+}
+
+function flattenObject(ob) {
+  var toReturn = {};
+
+  for (var i in ob) {
+    if (!ob.hasOwnProperty(i)) continue;
+
+    if (typeof ob[i] == "object" && ob[i] !== null) {
+      var flatObject = flattenObject(ob[i]);
+      for (var x in flatObject) {
+        if (!flatObject.hasOwnProperty(x)) continue;
+
+        toReturn[i + "." + x] = flatObject[x];
+      }
+    } else {
+      toReturn[i] = ob[i];
+    }
+  }
+  return toReturn;
 }
