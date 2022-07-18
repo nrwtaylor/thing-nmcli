@@ -17,7 +17,7 @@ var sys = require("sys");
 var exec = require("child_process").exec;
 
 // 26 September 2021
-console.log("thing-nmcl 1.0.1 6 June 2022");
+console.log("thing-nmcl 1.0.2 18 July 2022");
 
 const client = gearmanode.client();
 //
@@ -61,7 +61,7 @@ setInterval(function () {
     }
   );
   // });
-}, 10 * 60 * 1000);
+}, interval_minutes * 60 * 1000);
 
 function parseLine(text) {
   var obj = {};
