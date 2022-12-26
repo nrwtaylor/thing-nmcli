@@ -17,7 +17,7 @@ var sys = require("sys");
 var exec = require("child_process").exec;
 
 // 26 September 2021
-console.log("thing-nmcl 1.0.2 18 July 2022");
+console.log("thing-nmcl 1.0.3 25 December 2022");
 
 const client = gearmanode.client();
 //
@@ -105,7 +105,7 @@ function puts(error, stdout, stderr, text) {
     }
     count += 1;
   });
-
+console.log(visible_stations);
   //const sumSignal = visible_stations.reduce((total, visibleStation)=> ( (total) + +visibleStation.SIGNAL)),0);
   //const sumSignal = visible_stations.reduce((acc, visibleStation) => (acc + visibleStation.SIGNAL), 0)
 
@@ -136,7 +136,8 @@ function puts(error, stdout, stderr, text) {
     //    sumSignal += visibleStation.SIGNAL;
   });
 
-  const data = btoa(visible_stations);
+//  const data = btoa(visible_stations);
+const data = Buffer.from(visible_stations).toString('base64');
 
   var to = channel;
   var from = "nmcli";

@@ -39,3 +39,7 @@ WorkingDirectory=/var/www/thing-ping
 [Install]
 WantedBy=multi-user.target
 
+---
+
+watch -d 'nmcli -t -f CHAN device wifi | sort | uniq -c | sort -rn'
+
